@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Advanced Search - 
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="form-container">
+    <form novalidate="novalidate" action="/advanced_results" method="post" accept-charset="UTF-8" id="adv-search-form">
+
+      <div class="search-parameter">
+        <div class="parameter-label">Card Name</div>
+        <div class="parameter-input">
+          <input class="search-box" type="text" name="card-name" placeholder="" />
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Text</div>
+        <div class="parameter-input">
+          <input class="search-box" type="text" name="card-text" placeholder="" />
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Arena</div>
+        <div class="parameter-input">
+          <select name="arena" class="select-dropdown">
+            <option value=""></option>
+            <option value="Ground">Ground</option>
+            <option value="Space">Space</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Types/Traits</div>
+
+        <div class="parameter-input" id="traits-container">
+          <div>
+            <select name="trait[]" class="select-dropdown trait-select" data-placeholder="Select a Type or Trait">
+              <option value="">Select a Type or Trait</option>
+              <optgroup label="Types">
+                {% for type in unique_types %}
+                <option value="{{ type }}" {% if types==type %}selected{% endif %}>{{ type }}</option>
+                {% endfor %}
+              </optgroup>
+              <optgroup label="Traits">
+                {% for trait in unique_traits %}
+                <option value="{{ trait }}" {% if traits==trait %}selected{% endif %}>{{ trait }}</option>
+                {% endfor %}
+              </optgroup>
+            </select>
+          </div>
+          <div class="aspect-explain" id="type-checkbox">
+            <input type="checkbox" name="partial-match" />
+            <span> Check to return cards that match any type or trait you have selected. Otherwise, cards must match
+              all
+              types and traits </span>
+          </div>
+
+
+        </div>
+
+      </div>
+      <div class="search-parameter">
+        <div class="parameter-label">Aspects</div>
+        <div class="parameter-input">
+          <div class="aspect-container">
+            <label>
+              <input type="checkbox" name="aspect" value="b" />
+              <img src="static/images/vigilance.png" alt="Vigilance Icon">
+              <span class="aspect-name">Vigilance</span>
+            </label>
+            <label>
+              <input type="checkbox" name="aspect" value="w" />
+              <img src="static/images/heroism.png" alt="Heroism Icon">
+              <span class="aspect-name">Heroism</span>
+            </label>
+            <label>
+              <input type="checkbox" name="aspect" value="r" />
+              <img src="static/images/aggression.png" alt="Aggression Icon">
+              <span class="aspect-name">Aggression</span>
+            </label>
+            <label>
+              <input type="checkbox" name="aspect" value="y" />
+              <img src="static/images/cunning.png" alt="Cunning Icon">
+              <span class="aspect-name">Cunning</span>
+            </label>
+            <label>
+              <input type="checkbox" name="aspect" value="k" />
+              <img src="static/images/villainy.png" alt="Villainy Icon">
+              <span class="aspect-name">Villainy</span>
+            </label>
+            <label>
+              <input type="checkbox" name="aspect" value="g" />
+              <img src="static/images/command.png" alt="Command Icon">
+              <span class="aspect-name">Command</span>
+            </label>
+          </div>
+          <div class="aspect-options">
+            <label>
+              <select name="aspect-option" class="select-dropdown" id="aspect-option">
+                <option value="=">Exactly these aspects</option>
+                <option value=">=">Including these aspects</option>
+                <option value="<=">At most these aspects</option>
+              </select>
+            </label>
+          </div>
+          <div class="aspect-explain">
+            <span>"Including" means cards that are all the colors you select, with or without any others. "At most"
+              means cards that have some or all of the colors you select, plus colorless.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Stats</div>
+        <div class="parameter-input" id="stats-container">
+          <div class="stat-row">
+            <select class="stat-select select-dropdown select-dropdown-stats" name="stat-select-1">
+              <option value="c">Cost</option>
+              <option value="p">Power</option>
+              <option value="h">HP</option>
+            </select>
+            <select class="operator-select select-dropdown select-dropdown-stats" name="operator-select-1">
+              <option value="=">equal to</option>
+              <option value="<">less than</option>
+              <option value=">">greater than</option>
+              <option value="<=">less than or equal to</option>
+              <option value=">=">greater than or equal to</option>
+              <option value="!=">not equal to</option>
+            </select>
+            <input type="text" class="value-input search-box-stats" name="value-input-1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="search-parameter exclude-border">
+        <div class="parameter-label">Leader</div>
+        <div class="parameter-input" id="leader-container">
+          <select name="leader" class="select-dropdown leader-select" id="leader-select">
+            <option value=""></option>
+            {% for leader in leaders %}
+            <option value="{{ leader.setId }}-{{ leader.cardNumber }}" class="aspect-icon icon-aspect" {% if
+              leaders==leader %}selected{% endif %}>
+              <img src="/static/images/heroism.png" alt="Aspect Icon" class="aspect-icon">{{ leader.name }} - {{
+              leader.subtitle }} ({{ leader.setId }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Base</div>
+        <div class="parameter-input" id="base-container">
+          <select name="base" class="select-dropdown base-select" id="base-select">
+            <option value=""></option>
+            {% for base in bases %}
+            <option value="{{ base.setId }}-{{ base.cardNumber }}" {% if bases==base %}selected{% endif %}>{{
+              base.name }} - {{ base.setId }}</option>
+            {% endfor %}
+          </select>
+          <div class="aspect-explain">
+            <span>Specifying a leader and a base will display the aspect penalties for playing each card returned by
+              the search.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Rarity</div>
+        <div class="parameter-input">
+          <div class="aspect-container">
+            <label>
+              <input type="checkbox" name="rarity" value="c" />
+              <span class="aspect-name rarity-text">Common</span>
+            </label>
+            <label>
+              <input type="checkbox" name="rarity" value="u" />
+              <span class="aspect-name rarity-text">Uncommon</span>
+            </label>
+            <label>
+              <input type="checkbox" name="rarity" value="r" />
+              <span class="aspect-name rarity-text">Rare</span>
+            </label>
+            <label>
+              <input type="checkbox" name="rarity" value="s" />
+              <span class="aspect-name rarity-text">Starter</span>
+            </label>
+          </div>
+          <div class="aspect-explain">
+            <span>Only show cards with the selected rarities.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Artist</div>
+        <div class="parameter-input">
+          <input class="search-box" type="text" name="artist" placeholder="" />
+        </div>
+      </div>
+
+      <div class="search-parameter">
+        <div class="parameter-label">Preferences</div>
+        <div class="parameter-input">
+          <select name="display-option" class="select-dropdown">
+            <option value="images">Display as Images</option>
+            <option value="checklist">Display as Checklist</option>
+          </select>
+          <select name="display-sort-column" class="select-dropdown">
+            <option value="name">Sort by Name</option>
+            <option value="type">Sort by Type</option>
+            <option value="arenas">Sort by Arena</option>
+            <option value="aspects">Sort by Aspects</option>
+            <option value="power">Sort by Power</option>
+            <option value="hp">Sort by HP</option>
+            <option value="cost">Sort by Cost</option>
+            <option value="traits">Sort by Traits</option>
+            <option value="rarity">Sort by Rarity</option>
+            <option value="setnumber">Sort by Set/Number</option>
+            <option value="artist">Sort by Artist</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Repeat other search parameters here -->
+      <div class="fixed-bottom">
+      <input type="submit" value="Search with these options" id="advanced-btn">
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var traitsContainer = document.getElementById('traits-container');
+    var traitsCheckboxDiv = document.getElementById('type-checkbox');
+
+
+    // Array of unique traits
+    var uniqueTraits = {{ unique_traits | tojson
+  }};
+  var uniqueTypes = {{ unique_types | tojson }};
+
+  // Function to create a new select element for choosing a trait
+  function createTraitSelect() {
+    var traitSelect = document.createElement('select');
+    traitSelect.name = 'trait[]';
+    traitSelect.className = 'select-dropdown trait-select';
+
+    var typeOptgroup = document.createElement('optgroup');
+    typeOptgroup.setAttribute('label', 'Types');
+
+    var traitOptgroup = document.createElement('optgroup');
+    traitOptgroup.setAttribute('label', 'Traits');
+
+    traitSelect.appendChild(typeOptgroup);
+
+    // Add the "Any Trait" option
+    var anyTraitOption = document.createElement('option');
+    anyTraitOption.value = '';
+    anyTraitOption.textContent = 'Select a Type or Trait';
+    traitSelect.appendChild(anyTraitOption);
+
+    // Add the trait options
+    for (var i = 0; i < uniqueTraits.length; i++) {
+      var traitOption = document.createElement('option');
+      traitOption.value = uniqueTraits[i];
+      traitOption.textContent = uniqueTraits[i];
+      traitOptgroup.appendChild(traitOption);
+    }
+
+    // Add the trait options
+    for (var i = 0; i < uniqueTypes.length; i++) {
+      var typeOption = document.createElement('option');
+      typeOption.value = uniqueTypes[i];
+      typeOption.textContent = uniqueTypes[i];
+      typeOptgroup.appendChild(typeOption);
+    }
+
+    traitSelect.appendChild(typeOptgroup);
+    traitSelect.appendChild(traitOptgroup);
+
+    // Add event handler for changes in the trait select
+    traitSelect.addEventListener('change', function () {
+      var selectedTraits = traitsContainer.querySelectorAll('.trait-select option:checked');
+      if (selectedTraits.length > 0 && selectedTraits[selectedTraits.length - 1].value !== '') {
+        var newTraitSelect = createTraitSelect();
+        traitsContainer.insertBefore(newTraitSelect, traitsCheckboxDiv);
+      }
+    });
+
+    return traitSelect;
+  }
+
+  // Attach event handler to the initial trait select
+  var initialTraitSelect = traitsContainer.querySelector('.trait-select');
+  initialTraitSelect.addEventListener('change', function () {
+    var selectedTraits = traitsContainer.querySelectorAll('.trait-select option:checked');
+    if (selectedTraits.length > 0 && selectedTraits[selectedTraits.length - 1].value !== '') {
+      var newTraitSelect = createTraitSelect();
+      traitsContainer.insertBefore(newTraitSelect, traitsCheckboxDiv);
+    }
+  });
+    });
+
+</script>
+<script src="{{ url_for('static', filename='js/adv_script.js') }}"></script>
+{% endblock %}

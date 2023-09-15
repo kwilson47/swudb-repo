@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ card.name }} -
+{% endblock %}
+
+{% block content %}
+<div class="card-details-container">
+    <div class="card-details">
+        <div class="card-image">
+            {% if card.has_back %}
+            <img src="{{ card.front_art }}" alt="Card Image" data-front-image="{{ card.front_art }}"
+                data-back-image="{{ card.back_art }}" class="toggleable">
+            {% else %}
+            <img src="{{ card.front_art }}" alt="Card Image">
+            {% endif %}
+        </div>
+        <div class="card-info">
+            <div class="header">
+                <div class="aspect-icons" id="card-title-aspects">
+                    {% for aspect_icon in card.aspect_icons %}
+                    <div class="aspect-icon" id="card-title">
+                        <img src="{{ aspect_icon }}" alt="Aspect Icon">
+                    </div>
+                    {% endfor %}
+                    <p><strong>{{ card.name }}</strong></p>
+                </div>
+
+            </div>
+            
+
+            {% if card.type == 'Leader'%}
+                <div class="card-type">
+                    <p>{{ card.type }}</p>
+                </div>
+                <div class="card-traits">
+                    {% if card.traits %}
+                    <p>{{ ' • '.join(card.traits) }}</p>
+                    {% endif %}
+                </div>
+                {% if card.text %}
+                <div class="card-text">
+                    <p>
+                        {{ card.text | replace_aspects }}
+                    </p>
+                </div>
+
+
+
+
+                {% endif %}
+                {% if card.epic_action %}
+                <div class="card-epic-action">
+                    <p>{{ card.epic_action | safe }}</p>
+                </div>
+                {% endif %}
+
+                <br />
+                <div class="card-type">
+                    <p>{{ card.type }} Unit - {% if card.arenas %} {{ ', '.join(card.arenas) }} {% endif %}</p>
+                    {% if card.traits %}
+                    
+                    <p>{{ ' • '.join(card.traits) }}</p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="card-stats">
+                    <p>Cost: {{ card.cost }}</p>
+                    <p>Power: {{ card.power }}</p>
+                    <p>HP: {{ card.hp }}</p>
+                </div>
+                {% if card.back_text %}
+                <div class="card-back-text">
+                    <p>{{ card.back_text | safe }}</p>
+                </div>
+                {% endif %}
+                <div class="card-artist">
+                    <p>Artist: {{ card.artist }}</p>
+                </div>
+            {% else %}
+                <div class="card-type">
+                <p>{{ card.type }}
+                    {% if card.arenas %} - {{ ', '.join(card.arenas) }}
+                </p>
+                {% endif %}
+
+
+                </div>
+                <div class="card-traits">
+                    {% if card.traits %}
+                    <p>{{ ' • '.join(card.traits) }}</p>
+                    {% endif %}
+                </div>
+
+                {% if card.text %}
+                <div class="card-text">
+                    <p>{{ card.text | replace_aspects | safe }}</p>
+                </div>
+                {% endif %}
+                {% if card.epic_action %}
+                <div class="card-epic-action">
+                    <p>{{ card.epic_action | safe }}</p>
+                </div>
+                {% endif %}
+                <div class="card-stats">
+                    <p>Cost: {{ card.cost }}</p>
+                    <p>Power: {{ card.power }}</p>
+                    <p>HP: {{ card.hp }}</p>
+                </div>
+                <div class="card-artist">
+                    <p>Artist: {{ card.artist }}</p>
+                </div>
+            {% endif %}
+
+            <div class="card-set">
+                <p>Set: {{ card.set }} {{ card.number }}/252</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

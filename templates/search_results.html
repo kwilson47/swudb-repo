@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Search Results - 
+{% endblock %}
+
+{% block content %}
+    <div class="sort-container">
+        <div class="view-mode-section">
+            <label for="view-mode-select">View Results as</label>
+            <select id="view-mode-select">
+                <option value="images" {% if view_mode=='images' %}selected{% endif %}>Images</option>
+                <option value="checklist" {% if view_mode=='checklist' %}selected{% endif %}>Checklist</option>
+            </select>
+        </div>
+
+        <div class="sort-section">
+            <label for="sort-select">sorted by</label>
+            <select id="sort-select" name="sort-field">
+                <option value="2" {% if sort_field=='name' %}selected{% endif %}>Name</option>
+                <option value="4" {% if sort_field=='type' %}selected{% endif %}>Type</option>
+                <option value="5" {% if sort_field=='arenas' %}selected{% endif %}>Arena</option>
+                <option value="3" {% if sort_field=='aspects' %}selected{% endif %}>Aspects</option>
+                <option value="7" {% if sort_field=='power' %}selected{% endif %}>Power</option>
+                <option value="8" {% if sort_field=='hp' %}selected{% endif %}>HP</option>
+                <option value="6" {% if sort_field=='cost' %}selected{% endif %}>Cost</option>
+                <option value="9" {% if sort_field=='traits' %}selected{% endif %}>Traits</option>
+                <option value="10" {% if sort_field=='rarity' %}selected{% endif %}>Rarity</option>
+                <option value="1" {% if sort_field=='setnumber' %}selected{% endif %}>Set/Number</option>
+                <option value="11" {% if sort_field=='artist' %}selected{% endif %}>Artist</option>
+                {% if leader.name %}
+                <option value="12" {% if sort_field=='penalty' %}selected{% endif %}>Penalty</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="sort-order-section">
+            <label for="sort-order-select">:</label>
+            <select id="sort-order-select">
+                <option value="asc" {% if sort_order=='asc' %}selected{% endif %}>Asc</option>
+                <option value="desc" {% if sort_order=='desc' %}selected{% endif %}>Desc</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="result-string">
+        <div><p>{{ result_string }}</p></div>
+        {% if leader.name %}
+
+        <div class="aspect-icons">
+            Leader: {{ leader.name }} --
+            {% for aspect_icon in leader.aspect_icons %}
+
+            <div class="aspect-icon">
+                <img src="{{ aspect_icon }}" alt="Aspect Icon">
+            </div>
+
+            {% endfor %}
+        </div>
+        <div class="aspect-icons">
+            Base: {{ base.name }} --
+            {% for aspect_icon in base.aspect_icons %}
+
+            <div class="aspect-icon">
+                <img src="{{ aspect_icon }}" alt="Aspect Icon">
+            </div>
+
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="table-container" id="table-container">
+        
+        <table class="checklist-table display" id="cardTable">
+            <thead>
+                <tr>
+                    <th class="table-cell sortable" data-column="1">Set</th>
+                    <th class="table-cell sortable" data-column="1">Number</th>
+                    <th class="table-cell sortable" data-column="2">Name</th>
+                    <th class="table-cell sortable" data-column="3">Aspects</th>
+                    <th class="table-cell sortable" data-column="4">Type</th>
+                    <th class="table-cell sortable" data-column="5">Arena</th>
+                    <th class="table-cell sortable" data-column="6">Cost</th>
+                    <th class="table-cell sortable" data-column="7">Power</th>
+                    <th class="table-cell sortable" data-column="8">HP</th>
+                    <th class="table-cell sortable" data-column="9">Traits</th>
+                    <th class="table-cell sortable" data-column="10">Rarity</th>
+                    <th class="table-cell sortable" data-column="11">Artist</th>
+                    {% if leader.name %}
+                    <th class="table-cell sortable" data-column="12">Penalty</th>
+                    {% endif %}
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for card in cards %}
+                <tr class="card-row"
+                    onclick="window.location.href='/card/{{ card.set }}/{{ card.number }}/{{ card.name|replace('/', '-')|urlencode }}'"
+                    front-image="{{ card.front_art }}"
+                    {% if card.has_back %}
+                         back-image="{{ card.back_art }}" 
+                        {% endif %}>
+
+                    <td class="table-cell">{{ card.set }}</td>
+                    <td class="table-cell">{{ card.number }}</td>
+                    <td class="table-cell">{{ card.name }}</td>
+                    <td data-sort=" {% for aspect in card.aspects %}{{ aspect }}{% endfor %}">
+                        <div class="aspect-icons">
+                            {% for aspect_icon in card.aspect_icons %}
+                            <div class="aspect-icon">
+                                <img src="{{ aspect_icon }}" alt="Aspect Icon">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="table-cell">{{ card.type }}</td>
+                    <td class="table-cell">{{ ', '.join(card.arenas) }}</td>
+                    <td class="table-cell">{{ card.cost }}</td>
+                    <td class="table-cell">{{ card.power }}</td>
+                    <td class="table-cell">{{ card.hp }}</td>
+                    <td class="table-cell">{{ ', '.join(card.traits) }}</td>
+                    <td class="table-cell">{{ card.rarity }}</td>
+                    <td class="table-cell">{{ card.artist }}</td>
+                    {% if leader.name %}
+                    <td class="table-cell">{{ card.penalty }}</td>
+                    {% endif %}
+
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="image-container"></div>
+    </div>
+
+
+    <div class="card-grid-container" id="card-grid-container">
+        <div class="card-grid">
+            {% for card in cards %}
+            <div class="card-img" 
+            data-set="{{ card.set }}" 
+            data-number="{{ card.number }}" 
+            data-name="{{ card.name }}" 
+            data-type="{{ card.type }}" 
+            data-cost="{{ card.cost }}" 
+            data-hp="{{ card.hp }}" 
+            data-power="{{ card.power }}"
+            data-rarity="{{ card.rarity }}" 
+            data-artist="{{ card.artist }}"
+            data-penalty="{{ card.penalty }}"
+            data-arena="{{ card.arenas|join('|')|default('') }}"
+            data-traits="{{ card.traits|join('|')|default('') }}"
+            data-aspects="{{ card.aspects|join('|')|default('') }}">
+                {% if card.has_back %}
+                <a href="{{ url_for('card', set=card.set, number=card.number, name=card.name|replace(' ', '-')|replace('\"', '
+                    -')|replace('/', '-' )) }}">
+                    <img {% if card.is_landscape %}src="{{ card.v_front_art }}" {% else %}src="{{ card.front_art }}" {%
+                        endif %} alt="Card Image" {% if card.is_landscape %}data-front-image="{{ card.v_front_art }}" {%
+                        else %}data-front-image="{{ card.front_art }}" {% endif %} data-back-image="{{ card.back_art }}"
+                        class="card-image toggleable">
+                </a>
+                <button class="toggle-button"></button>
+                {% else %}
+                <a href="{{ url_for('card', set=card.set, number=card.number, name=card.name|replace(' ', '-')|replace('\"', '
+                    -')|replace('/', '-' )) }}">
+                    <img {% if card.is_landscape %}src="{{ card.v_front_art }}" {% else %}src="{{ card.front_art }}" {%
+                        endif %} alt="Card Image" class="card-image">
+                </a>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='js/results.js') }}"></script>
+{% endblock %}

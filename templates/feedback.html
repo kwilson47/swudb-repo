@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Contact Us - 
+{% endblock %}
+
+{% block content %}
+<div class="content index-content">
+    <h1>Contact Us</h1>
+    <p>Provide comments, feature suggestions, bugs, thoughts of any kind...</p>
+
+    <form action="/submit-feedback" method="POST">
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="5" cols="30" required></textarea><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+    {% endblock %}

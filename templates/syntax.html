@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Syntax Guide - 
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h1>Search Reference</h1>
+        <section class="aspect-wrapper">
+            <div class="aspect-desc">
+                <h2>Aspects</h2>
+                <p>You can find cards with certain aspects using the keywords <code>a:</code> or <code>aspect:</code>
+                </p>
+                <p>You can specify either the color of the aspect or the name of the aspect. The name/color pairs are:
+                </p>
+                <p><strong>Blue</strong> = Vigilance <br />
+                <strong>Green</strong> = Command<br />
+                <strong>Red</strong> = Aggression<br />
+                <strong>Yellow</strong> = Cunning<br />
+                <strong>White</strong> = Heroism<br />
+                    <strong>Black</strong> = Villainy<br /><br />
+                    
+                    
+                    
+                    
+                </p>
+                <p>When specifying color, you can use the first initial of the color (K for Black). When you do, you can combine
+                    multiple
+                    aspects, finding cards that include all of the specified aspects.</p>
+                <p>You can use comparison operators (>, <,>=, <=, and=) to check against ranges of aspects.</p>
+                            <p>The behvaior of the default <code>a:</code> keyword is the same as <code>&gt;=</code>.
+                            </p>
+            </div>
+            <div class="aspect-examples-wrapper">
+                <div><code>a:rk</code><br />
+                    Cards that are both Aggression and Villainy<br /><br />
+                    <code>aspect:command</code><br />
+                    Cards that are Command<br /><br />
+                    <code>aspect&lt;bk</code><br />
+                    Cards with either no aspect OR only Vigilance OR only Villainy<br /><br />
+                    <code>a&gt;r</code><br />
+                    Cards with Aggression and at least one other aspect<br />
+                </div>
+            </div>
+
+        </section>
+
+        <section class="text-search-wrapper">
+            <div class="text-search-desc">
+                <h2>Text, Traits, Types, Arena, Rarity</h2>
+                <p>You can find cards with certain traits using the <code>tr:</code> and <code>trait:</code> keywords.
+                </p>
+                <p>You can search the text of a card using the <code>t:</code> and <code>text:</code> keywords.</p>
+                <p>You can find cards with certain types using the <code>ty:</code> and <code>type:</code> keywords.</p>
+                <p>You can search cards by arena using the <code>ar:</code> and <code>arena:</code> keywords.</p>
+                <p>You can search cards by rarity using the <code>r:</code> and <code>rarity:</code> keywords.</p>
+            </div>
+            <div class="text-search-examples-wrapper">
+                <div class="text-search-examples">
+                    <code>t:"When Played"</code><br />
+                    Cards with the text "When Played"<br /><br />
+                    <code>tr:Jedi c>3</code><br />
+                    Cards with the Jedi trait that cost more than 3<br /><br />
+                    <code>rarity:c</code><br />
+                    All Common Cards<br /><br />
+                    <code>type:unit ar:ground</code><br />
+                    Ground arena Units<br /><br />
+                </div>
+            </div>
+
+        </section>
+
+        <section class="math-search-wrapper">
+            <div class="math-search-desc">
+                <h2>Cost, Power, and HP</h2>
+                <p>You can use comparison operators (>, <,=,>=, <=, and !=) to find cards with certain cost, power, and
+                            HP.</p>
+                            <p>You can use the keywords <code>c</code>, <code>p</code>, and <code>h</code> respectively.
+                            </p>
+            </div>
+            <div class="math-search-examples-wrapper">
+                <div class="math-search-examples"><code>p>3</code><br />
+                    Cards with power greater than 3<br /><br />
+                    <code>h>=3</code><br />
+                    Cards with 3 or more HP<br /><br />
+                    <code>p=2 c>3</code><br />
+                    Cards with power equal to 2 and cost greater than 3<br />
+                </div>
+            </div>
+
+        </section>
+
+        <section class="math-search-wrapper">
+            <div class="math-search-desc">
+                <h2>Groupings and Operators</h2>
+                <p>Expressions that are not separated by an operator use 'AND' by default. You can explicitly use the operators 
+                'AND' and 'OR'.</p>
+                            <p>You can group expressions using parenthesis to enforce a certain order of operations.
+                            </p>
+            </div>
+            <div class="math-search-examples-wrapper">
+                <div class="math-search-examples"><code>h>2 or p>2</code><br />
+                    Cards with HP greater than 2 or power greater than 2<br /><br />
+                    <code>(h>3 and c>3) or luke</code><br />
+                    Cards that either have 'luke' in the title or have both HP and cost greater than 3<br /><br />
+                    
+                </div>
+            </div>
+
+        </section>
+    </div>
+{% endblock %}

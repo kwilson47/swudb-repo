@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block meta_description %}Documentation pertaining to how to use our REST API to programmatically retrieve cards from
+our database.{% endblock %}
+
+{% block title %}
+API Documentation -
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>API Documentation</h1>
+
+    <section class="math-search-wrapper">
+        <div class="aspect-desc">
+            <h2> GET /Cards/{Set}/{Card}</h2>
+            <p>Supported formats: json, image, txt
+            </p>
+            <p>Returns a single card that matches the given set and number</p>
+            <p> Valid Query Parameters are:</p>
+            </p>
+            <p> <strong>format</strong> : String : 'json', 'csv', or 'txt' (defaults to 'json')<br />
+                <strong>pretty</strong> : Boolean : If true, the json will be human readable<br />
+                <strong>face</strong> : Boolean : If true, returns the back art of the image, if it exists<br />
+            </p>
+            <p>For example: https://api.swu-db.com/cards/sor/10 <br />
+                Returns Darth Vader - Dark Lord of the Sith</p>
+            <p></p>
+            <p>https://api.swu-db.com/cards/sor/82?format=image <br />
+                Redirects to the image of Emperor's Royal Guard</p>
+        </div>
+
+    </section>
+
+    <section class="aspect-wrapper">
+        <div class="aspect-desc">
+            <h2> GET /Cards/Search</h2>
+            <p>Supported formats: json, csv
+            </p>
+            <p>Returns a list of cards that match the given search</p>
+            <p> Valid Query Parameters are:</p>
+            </p>
+            <p><strong>q (required)</strong> : String : The search query to perform <br />
+                <strong>format</strong> : String : 'json' or 'csv'<br />
+                <strong>pretty</strong> : Boolean : If true, the json will be human readable<br />
+                <strong>order</strong> : String : The column you wish to order results by<br />
+                <strong>dir</strong> : String : The direction of the sort (defaults to 'asc')<br />
+            </p>
+            <p> Valid input for order: <br />
+                'name', 'setnumber', 'power', 'cost', 'hp', 'type', 'rarity', 'traits', 'aspects', 'artist', 'arenas',
+            </p>
+            <p>For example: https://api.swu-db.com/cards/search?q=set:sor&format=csv&order=setnumber <br />
+                Retrieves all cards in the SOR set in CSV format sorted by set number</p>
+            <p></p>
+            <p>https://api.swu-db.com/cards/search?q=c=3&pretty=true <br />
+                Retrieves all cards with a Cost of 3 in human readable JSON format</p>
+        </div>
+
+
+    </section>
+
+
+
+</div>
+{% endblock %}
