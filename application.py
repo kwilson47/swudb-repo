@@ -26,16 +26,17 @@ else:
     Bootstrap(app)
     session = boto3.Session(profile_name='swu-admin')
 
-
+aws_region = os.environ.get('AWS_REGION')
+dynamodb_table = os.environ.get('SWU_DB_TABLE')
 dynamodb = session.client('dynamodb',
-                        region_name='us-east-1')
+                        region_name=aws_region)
 
 
 def publish_feedback_to_sns(message):
     """
     Publishes a message to an SNS Topic
     """
-    sns = session.client('sns', region_name='us-east-1')
+    sns = session.client('sns', region_name=aws_region)
     topic_arn = os.environ.get('FEEDBACK_ARN')
     message = f"Message: {message}"
 
@@ -49,7 +50,7 @@ def get_card(set_id, card_number):
     Given a set id and card number, return the matching card
     """
     response = dynamodb.query(
-        TableName='Cards2',
+        TableName=dynamodb_table,
         KeyConditionExpression='setId = :set_id and cardNumber = :card_number',
         ExpressionAttributeValues={
             ':set_id': {'S': set_id},
@@ -390,18 +391,18 @@ def search_cards(search_input, sort_field='name', sort_order='asc', leader='', b
 
     if not expression_values:
         response = dynamodb.scan(
-            TableName='Cards2'
+            TableName=dynamodb_table
         )
     elif not expression_attribute_names:
         response = dynamodb.scan(
-            TableName='Cards2',
+            TableName=dynamodb_table,
             FilterExpression=filter_expression,
             ExpressionAttributeValues=expression_values
         )
     else:
         # Execute the query and retrieve the matching items
         response = dynamodb.scan(
-            TableName='Cards2',
+            TableName=dynamodb_table,
             FilterExpression=filter_expression,
             ExpressionAttributeValues=expression_values,
             ExpressionAttributeNames=expression_attribute_names
@@ -665,7 +666,7 @@ def resources():
 @app.route('/advanced')
 def advanced():
     response = dynamodb.scan(
-        TableName='Cards2'
+        TableName=dynamodb_table
     )
 
     # Retrieve unique traits from the items
