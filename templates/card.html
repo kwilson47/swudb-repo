@@ -23,7 +23,7 @@
                         <img src="{{ aspect_icon }}" alt="Aspect Icon">
                     </div>
                     {% endfor %}
-                    <p><strong>{{ card.name }}</strong></p>
+                    <p><strong>{% if card.is_unique %} ⟡ {% endif %}{{ card.name }}</strong></p>
                 </div>
 
             </div>

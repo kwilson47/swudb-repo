@@ -562,6 +562,7 @@ def process_item(item):
     aspects = [aspect['S'] for aspect in aspects_response]
     epic_action = item.get('epicActionStyled', {}).get('S', None)
     back_text = item.get('backTextStyled', {}).get('S', None)
+    is_unique = item.get('isUnique', {}).get('BOOL', False)
 
     traits_response = item.get('traits', {}).get('L', [])
     traits = [traits['S'] for traits in traits_response]
@@ -599,7 +600,8 @@ def process_item(item):
         'arenas': arenas,
         'epic_action': epic_action,
         'back_text': back_text,
-        'aspects': aspects
+        'aspects': aspects,
+        'is_unique': is_unique
     }
 
     return card
